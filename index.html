@@ -3,36 +3,70 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FactFinder AI - Portal Verifikasi Fakta Indonesia</title>
+    <title>FactFinder AI - Portal Verifikasi Fakta</title>
     <style>
-        /* Gaya Tampilan Dasar (CSS) */
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; line-height: 1.6; color: #333; background-color: #f4f6f9; margin: 0; padding: 0; }
-        header { background-color: #1a252f; color: white; padding: 20px text-align: center; text-align: center; }
+        /* 1. Pengaturan Dasar */
+        body { font-family: 'Segoe UI', sans-serif; line-height: 1.6; color: #333; background-color: #f4f6f9; margin: 0; padding: 0; }
+        header { background-color: #1a252f; color: white; padding: 20px; text-align: center; }
         header h1 { margin: 0; font-size: 24px; }
-        .container { max-width: 800px; margin: 20px auto; padding: 0 15px; }
+        .container { max-width: 1100px; margin: 20px auto; padding: 0 15px; }
+
+        /* 2. LOGIKA LAYOUT (Sistem Kolom) */
+        .main-layout { 
+            display: flex; 
+            gap: 20px; /* Jarak antar kolom */
+        }
+        .kolom-kiri { 
+            flex: 3; /* Ukuran lebih besar untuk Berita Utama */
+        }
+        .kolom-kanan { 
+            flex: 1; /* Ukuran lebih kecil untuk Sidebar/Pencarian */
+            min-width: 250px;
+        }
+
+        /* 3. Desain Kotak Berita (Card) */
+        .card { background: white; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); padding: 20px; margin-bottom: 20px; border-top: 5px solid #bdc3c7; }
+        .card.hoaks { border-top-color: #e74c3c; }
+        .card.fakta { border-top-color: #2ecc71; }
         
-        /* Gaya Kotak Artikel Analisis */
-        .card { background: white; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); padding: 20px; margin-bottom: 25px; border-top: 5px solid #bdc3c7; }
-        .card.hoaks { border-top-color: #e74c3c; } /* Merah untuk Hoaks */
-        .card.fakta { border-top-color: #2ecc71; } /* Hijau untuk Fakta */
-        
-        /* Label Batches */
-        .badge { display: inline-block; padding: 5px 10px; font-size: 12px; font-weight: bold; border-radius: 4px; color: white; margin-bottom: 10px; }
+        .badge { display: inline-block; padding: 3px 8px; font-size: 11px; font-weight: bold; border-radius: 4px; color: white; margin-bottom: 10px; }
         .badge-danger { background-color: #e74c3c; }
-        .badge-success { background-color: #2ecc71; }
         .badge-info { background-color: #3498db; }
+
+        /* 4. Desain Komponen Kolom Kanan (Pencarian) */
+        .search-box { background: white; padding: 15px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); position: sticky; top: 20px; }
+        .search-box h3 { margin-top: 0; color: #2c3e50; }
+        .search-input { width: 100%; padding: 10px; box-sizing: border-box; border: 1px solid #ddd; border-radius: 4px; font-size: 14px; }
+
+        /* 5. LOGIKA LAYOUT BAWAH (Berita Kecil) */
+        .layout-bawah {
+            margin-top: 30px;
+            border-top: 2px solid #ddd;
+            padding-top: 20px;
+        }
+        .grid-bawah {
+            display: flex;
+            gap: 15px;
+        }
+        .card-kecil {
+            flex: 1;
+            background: white;
+            padding: 15px;
+            border-radius: 6px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            font-size: 14px;
+            border-left: 4px solid #e74c3c; /* Garis merah di samping */
+        }
+        .card-kecil h4 { margin: 5px 0; font-size: 15px; }
+
+        /* Pengaturan Gambar responsive */
+        img { max-width: 100%; height: auto; border-radius: 6px; margin: 10px 0; }
+        blockquote { background: #f9f9f9; border-left: 4px solid #34495e; margin: 10px 0; padding: 10px; font-style: italic; font-size: 14px; }
         
-        /* Pengaturan Media responsive */
-        img { max-width: 100%; height: auto; border-radius: 6px; display: block; margin: 10px 0; border: 1px solid #ddd; }
-        audio { width: 100%; margin: 10px 0; }
-        .video-container { position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; margin: 10px 0; border-radius: 6px; }
-        .video-container iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0; }
-        
-        /* Bukti & Referensi */
-        .section-title { font-weight: bold; margin-top: 15px; color: #2c3e50; border-bottom: 1px solid #eee; padding-bottom: 5px; }
-        blockquote { background: #f9f9f9; border-left: 4px solid #34495e; margin: 10px 0; padding: 10px 20px; font-style: italic; }
-        .source-link { color: #3498db; text-decoration: none; font-weight: bold; }
-        .source-link:hover { text-decoration: underline; }
+        /* Mengatur tampilan agar rapi di HP */
+        @media (max-width: 768px) {
+            .main-layout, .grid-bawah { flex-direction: column; }
+        }
     </style>
 </head>
 <body>
@@ -44,92 +78,65 @@
 
 <div class="container">
 
-    <!-- CONTOH POSTINGAN 1: ANALISIS TEKS & GAMBAR (HOAKS) -->
-    <div class="card hoaks">
-        <span class="badge badge-danger">STATUS: HOAKS / MANIPULASI</span>
-        <span class="badge badge-info">Media: Gambar & Teks</span>
-        <h2>[HOAKS] Pamflet Pembagian Bansos Tunai Mengatasnamakan Pemkab Pati</h2>
-        <p><small>Dipublikasikan pada: 4 Juni 2026</small></p>
+    <!-- ================= BAGIAN ATAS (KIRI & KANAN) ================= -->
+    <div class="main-layout">
         
-        <div class="section-title">Klaim / Narasi yang Beredar:</div>
-        <blockquote>
-            "Bagi seluruh warga yang memiliki KTP Pati, silahkan klik link ini untuk mencairkan bantuan sosial tunai sebesar Rp 500.000 dari pemerintah daerah daerah bulan Juni."
-        </blockquote>
-        
-        <!-- Contoh Menampilkan Gambar Bukti (bisa diganti url gambar asli nanti) -->
-        <div class="section-title">Bukti Gambar yang Beredar:</div>
-        <img src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=800" alt="Contoh Hoaks Gambar">
-        
-        <div class="section-title">Hasil Analisis Fakta:</div>
-        <p>Setelah ditelusuri menggunakan Google Reverse Image Search, pamflet tersebut merupakan hasil editan digital dari program bantuan tahun 2020 lalu. Akun resmi Dinas Sosial menyatakan tidak ada program bansos tunai dengan skema tautan/link pendaftaran seperti yang tertera pada pamflet tersebut. Link tersebut murni merupakan tindakan phishing data.</p>
-        
-        <div class="section-title">Sumber Klarifikasi Sahih:</div>
-        <p>👉 <a class="source-link" href="https://turnbackhoax.id" target="_blank">Artikel Klarifikasi TurnBackHoax.id</a></p>
-        
-    </div>
-
-
-    <!-- CONTOH POSTINGAN 2: ANALISIS VIDEO (HOAKS) -->
-    <div class="card hoaks">
-        <span class="badge badge-danger">STATUS: MISLEADING CONTEXT</span>
-        <span class="badge badge-info">Media: Video</span>
-        <h2>[DISINFORMASI] Video Tanggul Sungai Jebol di Wilayah Juwana</h2>
-        <p><small>Dipublikasikan pada: 4 Juni 2026</small></p>
-        
-        <div class="section-title">Klaim / Narasi yang Beredar:</div>
-        <p>Beredar video di TikTok dengan takarir (caption) yang menyebutkan banjir besar susulan akibat tanggul sungai di Juwana jebol hari ini.</p>
-        
-        <div class="section-title">Video yang Disebarkan (Embed YouTube):</div>
-        <!-- Contoh Menampilkan Video dari YouTube -->
-        <div class="video-container">
-            <iframe src="https://www.youtube.com/embed/dQw4w9WgXcQ" allowfullscreen></iframe>
+        <!-- KOLOM KIRI: BERITA UTAMA -->
+        <div class="kolom-kiri">
+            <div class="card hoaks">
+                <span class="badge badge-danger">STATUS: HOAKS / MANIPULASI</span>
+                <h2>[HOAKS] Pamflet Pembagian Bansos Tunai Mengatasnamakan Pemkab Pati</h2>
+                <p><small>Dipublikasikan pada: 4 Juni 2026</small></p>
+                
+                <blockquote>
+                    "Bagi seluruh warga yang memiliki KTP Pati, silahkan klik link ini..."
+                </blockquote>
+                
+                <img src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=800" alt="Bukti Gambar">
+                
+                <p><strong>Hasil Analisis:</strong> Setelah ditelusuri menggunakan Google Reverse Image Search, pamflet tersebut merupakan hasil editan digital dari program bantuan tahun 2020 lalu. Tautan tersebut murni merupakan tindakan phishing data.</p>
+            </div>
         </div>
-        
-        <div class="section-title">Hasil Analisis Fakta:</div>
-        <p>Menggunakan alat bantu cek video (InVID Keyframes), potongan gambar dari video tersebut menunjukkan situasi banjir bandang lama yang terjadi pada tahun 2023 di wilayah lain, bukan kejadian tanggul jebol di Juwana pada saat ini. Kondisi pintu air dan tanggul di Juwana saat ini dipantau dalam status aman dan normal.</p>
-        
-        <div class="section-title">Sumber Klarifikasi Sahih:</div>
-        <p>👉 <a class="source-link" href="https://cekfakta.com" target="_blank">Laporan Cek Fakta Resmi</a></p>
+
+        <!-- KOLOM KANAN: MESIN PENCARIAN -->
+        <div class="kolom-kanan">
+            <div class="search-box">
+                <h3>Cari Berita / Hoaks</h3>
+                <input type="text" class="search-input" placeholder="Ketik kata kunci (misal: bansos)...">
+                <p style="font-size: 12px; color: #7f8c8d; margin-top: 10px;">*Masukkan kata kunci untuk memeriksa rumor yang beredar.</p>
+            </div>
+        </div>
+
     </div>
 
-    <!-- POSTINGAN BARU NYATA (HASIL COPY-PASTE) -->
-    <div class="card hoaks">
-        <span class="badge badge-danger">STATUS: HOAKS / PENIPUAN</span>
-        <span class="badge badge-info">Media: Teks & Link</span>
-        <h2>[HOAKS] Pesan WhatsApp Berhadiah Rice Cooker Gratis Mengatasnamakan Toko Elektronik</h2>
-        <p><small>Dipublikasikan pada: 4 Juni 2026</small></p>
+    <!-- ================= BAGIAN BAWAH (BERITA KECIL) ================= -->
+    <div class="layout-bawah">
+        <h3>Arsip Berita Lainnya</h3>
         
-        <div class="section-title">Klaim / Narasi yang Beredar:</div>
-        <blockquote>
-            "Selamat! Nomor Anda terpilih mendapatkan Rice Cooker gratis dalam rangka ulang tahun toko. Silahkan klik link berikut untuk mengklaim hadiah Anda..."
-        </blockquote>
-        
-        <div class="section-title">Hasil Analisis Fakta:</div>
-        <p>Pesan berantai tersebut adalah modus penipuan berkedok undian berhadiah (phishing). Pihak toko resmi telah mengonfirmasi bahwa mereka tidak pernah membuat program pembagian hadiah gratis lewat pesan WhatsApp tak dikenal. Tautan yang disebarkan mengarah ke situs palsu yang bertujuan mencuri data pribadi korban.</p>
-        
-        <div class="section-title">Sumber Klarifikasi Sahih:</div>
-        <p>👉 <a class="source-link" href="https://turnbackhoax.id" target="_blank">Konfirmasi Resmi TurnBackHoax.id</a></p>
-    </div>
+        <div class="grid-bawah">
+            
+            <!-- Berita Kecil 1 -->
+            <div class="card-kecil">
+                <span class="badge badge-danger">HOAKS</span>
+                <h4>[HOAKS] Pesan WA Berhadiah Rice Cooker</h4>
+                <p style="color: #666; font-size: 12px;">Modus penipuan phishing berkedok undian berhadiah...</p>
+            </div>
 
-    <!-- CONTOH POSTINGAN 3: ANALISIS REKAMAN SUARA / AUDIO (FAKTA) -->
-    <div class="card fakta">
-        <span class="badge badge-success">STATUS: FAKTA / BENAR</span>
-        <span class="badge badge-info">Media: Rekaman Suara (Audio)</span>
-        <h2>[Benar] Rekaman Suara Imbauan Kamtibmas dari Polresta</h2>
-        <p><small>Dipublikasikan pada: 3 Juni 2026</small></p>
-        
-        <div class="section-title">Klaim / Narasi yang Beredar:</div>
-        <p>Pesan berantai di grup WhatsApp berupa voice note (rekaman suara) petugas kepolisian yang mengimbau warga agar mengunci ganda kendaraan karena maraknya curanmor.</p>
-        
-        <div class="section-title">Bukti Audio yang Beredar:</div>
-        <!-- Contoh Menampilkan Audio Player -->
-        <audio controls>
-            <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
-            Browser kamu tidak mendukung pemutar audio.
-        </audio>
-        
-        <div class="section-title">Hasil Analisis Fakta:</div>
-        <p>Rekaman suara tersebut adalah <strong>BENAR ASLI</strong> dari pihak Humas Polres setempat sebagai bentuk langkah preventif dan sosialisasi kepada warga masyarakat. Masyarakat diharapkan tetap tenang namun waspada sesuai imbauan resmi tersebut.</p>
+            <!-- Berita Kecil 2 -->
+            <div class="card-kecil" style="border-left-color: #2ecc71;"> <!-- Diubah jadi hijau -->
+                <span class="badge badge-success" style="background:#2ecc71;">FAKTA</span>
+                <h4>[FAKTA] Imbauan Kamtibmas Polresta</h4>
+                <p style="color: #666; font-size: 12px;">Rekaman suara pesan berantai dari Humas Polres adalah asli...</p>
+            </div>
+
+            <!-- Berita Kecil 3 -->
+            <div class="card-kecil">
+                <span class="badge badge-danger">HOAKS</span>
+                <h4>[HOAKS] Tanggul Juwana Jebol Hari Ini</h4>
+                <p style="color: #666; font-size: 12px;">Video potongan banjir tahun lalu disebarkan kembali...</p>
+            </div>
+
+        </div>
     </div>
 
 </div>
